@@ -152,7 +152,7 @@ class ModelMain(nn.Module):
 
 
 if __name__ == "__main__":
-    config = {"model_params": {"backbone_name": "darknet_53"}}
+    config = {"model_params": {"backbone_name": "shufflenet_2"}}
     m = ModelMain(config)
     x = torch.randn(1, 3, 416, 416)
     y0, y1, y2 = m(x)
