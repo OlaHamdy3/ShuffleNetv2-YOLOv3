@@ -172,7 +172,7 @@ def shufflenet2(pretrained, **kwargs):
     model = ShuffleNet2()
     if pretrained:
         if isinstance(pretrained, str):
-            model.load_state_dict(t.load(pretrained))
+            model.load_state_dict(t.load(pretrained), strict=False)
         else:
             raise Exception("darknet request a pretrained path. got [{}]".format(pretrained))
     return model
