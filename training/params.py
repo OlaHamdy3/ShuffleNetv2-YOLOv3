@@ -2,7 +2,7 @@ TRAINING_PARAMS = \
 {
     "model_params": {
         "backbone_name": "shufflenet_2",
-        "backbone_pretrained": "", #  set empty to disable
+        "backbone_pretrained": "../weights/shufflenetv2.pth", #  set empty to disable
     },
     "yolo": {
         "anchors": [[[116, 90], [156, 198], [373, 326]],
