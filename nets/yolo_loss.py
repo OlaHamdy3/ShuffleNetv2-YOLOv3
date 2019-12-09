@@ -124,8 +124,8 @@ class YOLOLoss(nn.Module):
                 # Where the overlap is larger than threshold set mask to zero (ignore)
                 noobj_mask[b, anch_ious > ignore_threshold, gj, gi] = 0
                 # Find the best matching anchor box
-                ##best_n = np.argmax(anch_ious)
-                best_n = torch.max(anch_ious,1)
+                best_n = np.argmax(anch_ious)
+                ##best_n = torch.max(anch_ious,1)
 
                 # Masks
                 mask[b, best_n, gj, gi] = 1
