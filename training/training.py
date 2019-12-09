@@ -124,11 +124,14 @@ def train(config):
                                                             value,
                                                             config["global_step"])
 
-            if step > 0 and step % 1000 == 0:
+           # if step > 0 and step % 1000 == 0:
                 # net.train(False)
-                _save_checkpoint(net.state_dict(), config)
+               # _save_checkpoint(net.state_dict(), config)
                 # net.train(True)
 
+        
+        
+        _save_checkpoint(net.state_dict(), config)
         lr_scheduler.step()
 
     # net.train(False)
