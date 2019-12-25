@@ -23,7 +23,9 @@ TRAINING_PARAMS = \
     },
     "batch_size": 8,
     "train_path": "../data/coco/trainvalno5k.txt",
-    "epochs": 2,
+    "mix": True,
+    "no_mixup_epochs": 20,
+    "epochs": 200,
     "img_h": 416,
     "img_w": 416,
     "parallels": [0,1,2,3],                         #  config GPU device
