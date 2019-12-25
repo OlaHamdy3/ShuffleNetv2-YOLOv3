@@ -33,6 +33,10 @@ def train(config):
     net.train(is_training)
     mixup = config["mix"]
     no_mixup_epochs=config["no_mixup_epochs"]
+    base_lr = 0.001
+    cos = True
+    epochs = config["epochs"]
+    
 
     # Optimizer and learning rate
     optimizer = _get_optimizer(config, net)
@@ -86,7 +90,11 @@ def train(config):
                   preproc=TrainTransform(rgb_means=(0.485, 0.456, 0.406),std=(0.229, 0.224, 0.225),max_labels=20),
                   )
         dataloader.set_mixup(np.random.beta, 1.5,1.5)
-        
+    
+    tmp_lr = base_lr
+    def set_lr(tmp_lr):
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = tmp_lr   
 
     # Start the training loop
     logging.info("Start training.")
@@ -95,6 +103,14 @@ def train(config):
             images, labels = samples["image"], samples["label"]
             start_time = time.time()
             config["global_step"] += 1
+            if cos:
+                if epoch <= epochs-no_mixup_epochs and epoch > 20:
+                    min_lr = 0.00001
+                    tmp_lr = min_lr + 0.5*(base_lr-min_lr)*(1+math.cos(math.pi*(epoch-20)*1./\
+                        (epochs-no_mixup_epochs-20)))
+                elif epoch > epochs-no_mixup_epochs:
+                    tmp_lr = 0.00001
+                set_lr(tmp_lr)
 
             # Forward and backward
             optimizer.zero_grad()
