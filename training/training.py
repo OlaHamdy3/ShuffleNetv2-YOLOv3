@@ -31,6 +31,8 @@ def train(config):
     # Load and initialize network
     net = ModelMain(config, is_training=is_training)
     net.train(is_training)
+    mixup = config["mix"]
+    no_mixup_epochs=config["no_mixup_epochs"]
 
     # Optimizer and learning rate
     optimizer = _get_optimizer(config, net)
@@ -78,6 +80,13 @@ def train(config):
                                                          is_training=True),
                                              batch_size=config["batch_size"],
                                              shuffle=True, num_workers=32, pin_memory=True)
+    if mixup:
+        from mixupdetection import MixupDetection
+        dataloader = MixupDetection(dataloader,
+                  preproc=TrainTransform(rgb_means=(0.485, 0.456, 0.406),std=(0.229, 0.224, 0.225),max_labels=20),
+                  )
+        dataloader.set_mixup(np.random.beta, 1.5,1.5)
+        
 
     # Start the training loop
     logging.info("Start training.")
