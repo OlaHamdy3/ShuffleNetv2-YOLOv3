@@ -8,7 +8,7 @@ import json
 import importlib
 import logging
 import shutil
-
+import math
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -81,9 +81,9 @@ def train(config):
                                     config["yolo"]["classes"], (config["img_w"], config["img_h"])))
 
     # DataLoader
-    dataloader = torch.utils.data.DataLoader(COCODataset(config["train_path"],
-                                                         (config["img_w"], config["img_h"]),
-                                                         is_training=True),
+    dataset = COCODataset(config["train_path"],(config["img_w"], config["img_h"]),is_training=True)
+
+    dataloader = torch.utils.data.DataLoader(dataset,
                                              batch_size=config["batch_size"],
                                              shuffle=True, num_workers=32, pin_memory=True)
     if mixup:
@@ -99,7 +99,7 @@ def train(config):
             param_group['lr'] = tmp_lr   
 
     # Start the training loop
-    epoch_size = len(dataloader) // batch_size
+    epoch_size = len(dataset) // batch_size
     logging.info("Start training.")
     for epoch in range(config["epochs"]):
         for step, samples in enumerate(dataloader):
@@ -109,6 +109,7 @@ def train(config):
             
             ##cosine learning rate scheduling
             if epoch < burn_in:
+                
                 tmp_lr = base_lr * pow((step+epoch*epoch_size)*1. / (burn_in*epoch_size), 4)
                 set_lr(tmp_lr)
             elif cos:
