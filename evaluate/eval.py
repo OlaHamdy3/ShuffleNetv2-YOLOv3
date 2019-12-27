@@ -72,6 +72,9 @@ def evaluate(config):
                 output_list.append(yolo_losses[i](outputs[i]))
             output = torch.cat(output_list, 1)
             output = non_max_suppression(output, config["yolo"]["classes"], conf_thres=0.2)
+            
+            nms_end=time.time()
+            nms_time +=(nms_end-infer_end)
             #  calculate
             
             for sample_i in range(labels.size(0)):
@@ -96,9 +99,11 @@ def evaluate(config):
             logging.info('Batch [%d/%d] mAP: %.5f' % (step, len(dataloader), float(correct / n_gt)))
 
     a_infer_time = 1000*inference_time / (n_samples)
+    a_nms_time= 1000*nms_time / (n_samples)
     
     logging.info('Mean Average Precision: %.5f' % float(correct / n_gt))
-    logging.info('Inference time: %.3f ms' % float(a_infer_time))
+    logging.info('Average forward time: %.3f ms' % float(a_infer_time))
+    logging.info('Average inference time: %.3f ms' % float(a_infer_time+a_nms_time))
 
 def main():
     logging.basicConfig(level=logging.DEBUG,
