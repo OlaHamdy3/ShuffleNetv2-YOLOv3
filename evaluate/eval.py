@@ -11,7 +11,7 @@ import shutil
 
 import torch
 import torch.nn as nn
-
+import time
 
 MY_DIRNAME = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(MY_DIRNAME, '..'))
@@ -55,17 +55,25 @@ def evaluate(config):
     logging.info("Start eval.")
     n_gt = 0
     correct = 0
+    inference_time = 0
+    nms_time=0
+    n_samples = 0
     for step, samples in enumerate(dataloader):
+        n_samples+=1
         images, labels = samples["image"], samples["label"]
         labels = labels.cuda()
         with torch.no_grad():
+            start=time.time()
             outputs = net(images)
+            infer_end=time.time()
+            inference_time += (infer_end-start)
             output_list = []
             for i in range(3):
                 output_list.append(yolo_losses[i](outputs[i]))
             output = torch.cat(output_list, 1)
             output = non_max_suppression(output, config["yolo"]["classes"], conf_thres=0.2)
             #  calculate
+            
             for sample_i in range(labels.size(0)):
                 # Get labels for sample where width is not zero (dummies)
                 target_sample = labels[sample_i, labels[sample_i, :, 3] != 0]
@@ -87,7 +95,10 @@ def evaluate(config):
         if n_gt:
             logging.info('Batch [%d/%d] mAP: %.5f' % (step, len(dataloader), float(correct / n_gt)))
 
+    a_infer_time = 1000*inference_time / (n_samples)
+    
     logging.info('Mean Average Precision: %.5f' % float(correct / n_gt))
+    logging.info('Inference time: %.3f ms' % float(a_infer_time))
 
 def main():
     logging.basicConfig(level=logging.DEBUG,
