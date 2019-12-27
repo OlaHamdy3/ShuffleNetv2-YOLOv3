@@ -128,7 +128,7 @@ def train(config):
             loss.backward()
             optimizer.step()
 
-            if step > 0 and step % 10 == 0:
+            if True:
                 _loss = loss.item()
                 duration = float(time.time() - start_time)
                 example_per_second = config["batch_size"] / duration
@@ -155,7 +155,8 @@ def train(config):
                 # net.train(True)
 
         
-        
+        if epoch % 5 ==0:
+            torch.save(net.state_dict(), './epoch-{}.pth'.format(epoch))
         _save_checkpoint(net.state_dict(), config)
         lr_scheduler.step()
 
