@@ -112,10 +112,10 @@ def train(config):
                 tmp_lr = base_lr * pow((step+epoch*epoch_size)*1. / (burn_in*epoch_size), 4)
                 set_lr(tmp_lr)
             elif cos:
-                if epoch <= epochs-no_mixup_epochs and epoch > 20:
+                if epoch <= epochs-no_mixup_epochs and epoch > 10:
                     min_lr = 0.00001
-                    tmp_lr = min_lr + 0.5*(base_lr-min_lr)*(1+math.cos(math.pi*(epoch-20)*1./\
-                        (epochs-no_mixup_epochs-20)))
+                    tmp_lr = min_lr + 0.5*(base_lr-min_lr)*(1+math.cos(math.pi*(epoch-10)*1./\
+                        (epochs-no_mixup_epochs-10)))
                 elif epoch > epochs-no_mixup_epochs:
                     tmp_lr = 0.00001
                 set_lr(tmp_lr)
