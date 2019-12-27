@@ -22,7 +22,7 @@ TRAINING_PARAMS = \
         "weight_decay": 4e-05,
     },
     "batch_size": 8,
-    "train_path": "../data/coco/trainvalno5k.txt",
+    "train_path": "/content/ShuffleNetv2-YOLOv3/data/cones_paths.txt",
     "mix": False,
     "no_mixup_epochs": 0,
     "epochs": 100,
