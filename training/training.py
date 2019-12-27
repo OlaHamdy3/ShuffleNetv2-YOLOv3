@@ -35,7 +35,9 @@ def train(config):
     no_mixup_epochs=config["no_mixup_epochs"]
     base_lr = 0.001
     cos = True
+    burn_in = 5
     epochs = config["epochs"]
+    batch_size = config["batch_size"]
     
 
     # Optimizer and learning rate
@@ -97,19 +99,32 @@ def train(config):
             param_group['lr'] = tmp_lr   
 
     # Start the training loop
+    epoch_size = len(dataloader) // batch_size
     logging.info("Start training.")
     for epoch in range(config["epochs"]):
         for step, samples in enumerate(dataloader):
             images, labels = samples["image"], samples["label"]
             start_time = time.time()
             config["global_step"] += 1
-            if cos:
+            
+            ##cosine learning rate scheduling
+            if epoch < burn_in:
+                tmp_lr = base_lr * pow((step+epoch*epoch_size)*1. / (burn_in*epoch_size), 4)
+                set_lr(tmp_lr)
+            elif cos:
                 if epoch <= epochs-no_mixup_epochs and epoch > 20:
                     min_lr = 0.00001
                     tmp_lr = min_lr + 0.5*(base_lr-min_lr)*(1+math.cos(math.pi*(epoch-20)*1./\
                         (epochs-no_mixup_epochs-20)))
                 elif epoch > epochs-no_mixup_epochs:
                     tmp_lr = 0.00001
+                set_lr(tmp_lr)
+
+            elif epoch == burn_in:
+                tmp_lr = base_lr
+                set_lr(tmp_lr)
+            elif epoch in steps and step == 0:
+                tmp_lr = tmp_lr * 0.1
                 set_lr(tmp_lr)
 
             # Forward and backward
