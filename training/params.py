@@ -24,7 +24,7 @@ TRAINING_PARAMS = \
     "batch_size": 8,
     "train_path": "../data/coco/trainvalno5k.txt",
     "mix": False,
-    "no_mixup_epochs": 20,
+    "no_mixup_epochs": 0,
     "epochs": 100,
     "img_h": 414,
     "img_w": 414,
