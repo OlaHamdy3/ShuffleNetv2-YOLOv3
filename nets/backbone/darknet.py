@@ -90,7 +90,7 @@ def darknet21(pretrained, **kwargs):
     model = DarkNet([1, 1, 2, 2, 1])
     if pretrained:
         if isinstance(pretrained, str):
-            model.load_state_dict(torch.load(pretrained),, strict=False)
+            model.load_state_dict(torch.load(pretrained), strict=False)
         else:
             raise Exception("darknet request a pretrained path. got [{}]".format(pretrained))
     return model
@@ -101,7 +101,7 @@ def darknet53(pretrained, **kwargs):
     model = DarkNet([1, 2, 8, 8, 4])
     if pretrained:
         if isinstance(pretrained, str):
-            model.load_state_dict(torch.load(pretrained),, strict=False)
+            model.load_state_dict(torch.load(pretrained), strict=False)
         else:
             raise Exception("darknet request a pretrained path. got [{}]".format(pretrained))
     return model
